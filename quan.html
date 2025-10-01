@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Chúc mừng sinh nhật 🎉</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --card:#fff;
+    --accent:#ff6b6b;
+    --muted:#9aa4b2;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    background: radial-gradient(1200px 600px at 10% 10%, #11263a 0%, #08101a 25%, #05060a 70%), var(--bg);
+    color:var(--card);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .wrap{
+    width:100%;max-width:980px;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border-radius:18px;padding:22px;box-shadow: 0 10px 40px rgba(2,8,23,0.7);position:relative;overflow:hidden;
+  }
+
+  header{display:flex;align-items:center;gap:16px}
+  .logo{
+    width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#ffb199,#ff6b6b);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:white;box-shadow:0 6px 18px rgba(255,107,107,0.18);
+  }
+  h1{margin:0;font-size:1.6rem}
+  p.lead{margin:6px 0 16px;color:var(--muted)}
+
+  .main{
+    display:grid;grid-template-columns: 1fr 420px;gap:18px;
+  }
+  @media (max-width:880px){ .main{grid-template-columns:1fr} .right{order:-1} }
+
+  /* Card hiển thị lời chúc */
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;padding:18px;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;
+    text-align:center;
+  }
+  .name{
+    font-size:2.2rem;margin:8px 0 6px;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,0.6);
+  }
+  .message{color:var(--muted);margin-bottom:14px;padding:0 14px;line-height:1.35}
+  .cake{
+    width:160px;height:160px;position:relative;margin-top:10px;
+  }
+
+  /* Cake layers */
+  .cake .layer{position:absolute;left:50%;transform:translateX(-50%);border-radius:12px}
+  .cake .layer.one{bottom:12px;width:140px;height:52px;background:#ffd9b3;box-shadow:0 8px 18px rgba(0,0,0,0.35)}
+  .cake .layer.two{bottom:46px;width:120px;height:42px;background:#ffd0a0}
+  .cake .frost{bottom:72px;width:100px;height:28px;background:linear-gradient(90deg,#ff9db6,#ffd28a);border-radius:8px}
+  .candle{position:absolute;left:50%;transform:translateX(-50%);bottom:98px;width:8px;height:28px;background:#ff7b7b;border-radius:4px;display:flex;align-items:flex-start;justify-content:center}
+  .flame{width:10px;height:14px;border-radius:50% 50% 50% 50%;background: radial-gradient(circle at 30% 30%, #fff7b8 0%, #ffd06a 30%, #ff7b34 65%);transform-origin:center center;animation:flame 900ms infinite alternate;}
+  @keyframes flame{from{transform:scale(1) translateY(0)} to{transform:scale(1.12) translateY(-2px)}}
+
+  /* Right panel (controls) */
+  .right{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    border-radius:12px;padding:18px;min-height:320px;border:1px solid rgba(255,255,255,0.03)
+  }
+  label{display:block;font-size:0.9rem;margin-bottom:6px;color:var(--muted)}
+  input[type="text"], textarea, select{
+    width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--card);outline:none;font-size:1rem;
+  }
+  textarea{min-height:88px;resize:vertical}
+  .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#ffb199);color:#fff;font-weight:700;cursor:pointer;margin-top:10px}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);font-weight:600}
+  .controls{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* balloons */
+  .balloon{
+    position:absolute;width:40px;height:52px;border-radius:50% 50% 50% 50%;opacity:0.95;
+    transform-origin:center; animation:float calc(4s + var(--i)*0.8s) ease-in-out infinite;
+  }
+  @keyframes float{0%{transform:translateY(40px) rotate(-6deg)}50%{transform:translateY(-30px) rotate(6deg)}100%{transform:translateY(40px) rotate(-6deg)}}
+  .balloon::after{content:'';position:absolute;bottom:-20px;left:50%;width:2px;height:18px;background:rgba(255,255,255,0.2);transform:translateX(-50%)}
+
+  /* confetti canvas sits above everything */
+  canvas.confetti{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:6}
+
+  footer{margin-top:12px;color:var(--muted);font-size:0.9rem;text-align:center}
+
+  .top-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .small{font-size:0.9rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap" id="page">
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <header>
+    <div class="logo">HB</div>
+    <div>
+      <h1>Trang chúc mừng sinh nhật</h1>
+      <p class="lead">Tạo lời chúc nhanh, có hiệu ứng nến, bóng bay và confetti — hoàn toàn miễn phí 🎂</p>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="card" id="card">
+      <div class="top-row">
+        <div style="margin-right:10px"><strong class="small">Gửi tới</strong></div>
+      </div>
+
+      <div class="name" id="displayName">quantuban!</div>
+      <div class="message" id="displayMessage">bắn nhiều vào rồi sẽ có lúc mày liệt thôi con!</div>
+
+      <div class="cake" aria-hidden="true">
+        <div class="layer one"></div>
+        <div class="layer two"></div>
+        <div class="cake-top frost"></div>
+        <div class="candle"><div class="flame"></div></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="btn" id="partyBtn">🎉 Bật confetti</button>
+        <button class="btn ghost" id="printBtn">🖨️ In / Lưu PDF</button>
+      </div>
+
+      <!-- balloons placed with JS -->
+    </div>
+
+    <aside class="right">
+      <label for="nameInput">Tên người nhận</label>
+      <input id="nameInput" type="text" placeholder="Ví dụ: Minh, Lan, Ba..." value="Bạn thân mến!">
+
+      <label for="messageInput" style="margin-top:10px">Lời chúc</label>
+      <textarea id="messageInput">Chúc bạn có một ngày sinh nhật thật vui vẻ, tràn đầy hạnh phúc và ngập tràn bất ngờ dễ thương!</textarea>
+
+      <label style="margin-top:10px">Màu nền (tùy chọn)</label>
+      <select id="themeSelect">
+        <option value="default">Tối - Mặc định</option>
+        <option value="sunny">Vàng tươi</option>
+        <option value="pastel">Pastel</option>
+        <option value="dark">Đêm sao</option>
+      </select>
+
+      <div style="margin-top:12px" class="controls">
+        <button class="btn" id="applyBtn">✍️ Gửi lời chúc</button>
+        <button class="btn ghost" id="resetBtn">🔄 Mặc định</button>
+      </div>
+
+      <div style="margin-top:14px">
+        <label class="small">Nhạc nền (bật/tắt)</label><br>
+        <audio id="bgMusic" loop preload="none">
+          <!-- mặc định không phát nhạc nội bộ, nhưng có thể thay URL nếu muốn -->
+          <source src="" type="audio/mpeg">
+        </audio>
+        <button class="btn ghost" id="musicToggle">▶️ Bật nhạc</button>
+      </div>
+
+      <div style="margin-top:14px" class="small">
+        Mẹo: nhấn "Gửi lời chúc" để cập nhật. Dùng "In / Lưu PDF" nếu muốn lưu giữ.
+      </div>
+    </aside>
+  </div>
+
+  <footer>Made with ♥ — Chúc một ngày sinh nhật tuyệt vời! 🎂</footer>
+</div>
+
+<script>
+/* --- UI logic --- */
+const nameInput = document.getElementById('nameInput');
+const messageInput = document.getElementById('messageInput');
+const displayName = document.getElementById('displayName');
+const displayMessage = document.getElementById('displayMessage');
+const applyBtn = document.getElementById('applyBtn');
+const resetBtn = document.getElementById('resetBtn');
+const themeSelect = document.getElementById('themeSelect');
+const partyBtn = document.getElementById('partyBtn');
+const printBtn = document.getElementById('printBtn');
+const musicToggle = document.getElementById('musicToggle');
+const bgMusic = document.getElementById('bgMusic');
+const confettiCanvas = document.getElementById('confetti');
+const card = document.getElementById('card');
+
+applyBtn.onclick = () => {
+  displayName.textContent = nameInput.value.trim() || "Bạn thân mến!";
+  displayMessage.textContent = messageInput.value.trim() || "Chúc bạn một ngày vui vẻ!";
+  applyTheme(themeSelect.value);
+};
+
+resetBtn.onclick = () => {
+  nameInput.value = "Bạn thân mến!";
+  messageInput.value = "Chúc bạn có một ngày sinh nhật thật vui vẻ, tràn đầy hạnh phúc và ngập tràn bất ngờ dễ thương!";
+  themeSelect.value = "default";
+  applyBtn.click();
+};
+
+function applyTheme(key){
+  const root = document.documentElement;
+  if(key === 'sunny'){
+    document.body.style.background = 'radial-gradient(1200px 600px at 10% 10%, #fff7e6 0%, #fff1d6 20%, #ffe8c2 60%), linear-gradient(180deg,#ffd89b,#ffb199)';
+    root.style.setProperty('--accent','#ff8a00');
+  } else if(key === 'pastel'){
+    document.body.style.background = 'radial-gradient(1200px 600px at 10% 10%, #fef6ff 0%, #f7f0ff 20%, #eef6ff 60%), linear-gradient(180deg,#ffd4fb,#bfe9ff)';
+    root.style.setProperty('--accent','#a76bff');
+  } else if(key === 'dark'){
+    document.body.style.background = 'radial-gradient(1200px 600px at 10% 10%, #0b1220 0%, #051025 20%, #001219 60%), #001219';
+    root.style.setProperty('--accent','#00c2ff');
+  } else {
+    location.reload(); // simple way to restore original background
+  }
+}
+
+/* --- Confetti --- */
+/* simple confetti implementation (no external libs) */
+const ctx = confettiCanvas.getContext('2d');
+function resizeCanvas(){ confettiCanvas.width = confettiCanvas.offsetWidth; confettiCanvas.height = confettiCanvas.offsetHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+let confettiParticles = [];
+function rand(min,max){ return Math.random()*(max-min)+min; }
+
+function spawnConfetti(count){
+  for(let i=0;i<count;i++){
+    confettiParticles.push({
+      x: rand(0, confettiCanvas.width),
+      y: rand(-confettiCanvas.height*0.2, confettiCanvas.height*0.2),
+      r: rand(6,12),
+      d: rand(10,30),
+      tilt: rand(-10,10),
+      color: ['#ff6b6b','#ffd166','#6be7b0','#9ad0ff','#d69bff'][Math.floor(rand(0,5))],
+      speedY: rand(1,4),
+      speedX: rand(-1,1),
+      rot: rand(0,360),
+      rotSpeed: rand(-7,7)
+    });
+  }
+}
+
+let confettiActive = false;
+function updateConfetti(){
+  if(!confettiActive){ return; }
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  for(let i=confettiParticles.length-1;i>=0;i--){
+    const p = confettiParticles[i];
+    p.y += p.speedY;
+    p.x += p.speedX + Math.sin((p.y+p.d)/20)*0.6;
+    p.tilt += 0.1;
+    p.rot += p.rotSpeed*0.01;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate((p.rot*Math.PI)/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+    ctx.restore();
+    if(p.y > confettiCanvas.height + 20){ confettiParticles.splice(i,1); }
+  }
+  if(confettiParticles.length < 20){ spawnConfetti(30); }
+  requestAnimationFrame(updateConfetti);
+}
+
+partyBtn.addEventListener('click', () => {
+  confettiActive = !confettiActive;
+  if(confettiActive){
+    spawnConfetti(120);
+    updateConfetti();
+    partyBtn.textContent = '⛔ Dừng confetti';
+  } else {
+    confettiParticles = [];
+    ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    partyBtn.textContent = '🎉 Bật confetti';
+  }
+});
+
+/* --- Balloons --- */
+const colors = ['#ff6b6b','#ffd166','#9ad0ff','#9be7c4','#d69bff'];
+function createBalloons(){
+  // remove old
+  document.querySelectorAll('.balloon').forEach(n=>n.remove());
+  for(let i=0;i<8;i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.setProperty('--i', i);
+    b.style.left = (6 + i*12) + '%';
+    b.style.bottom = (10 + rand(0,20)) + 'px';
+    b.style.background = colors[i%colors.length];
+    b.style.transform = `translateY(${rand(0,40)}px) rotate(${rand(-8,8)}deg)`;
+    b.style.opacity = 0.95;
+    document.getElementById('card').appendChild(b);
+  }
+}
+createBalloons();
+
+/* --- Music toggle --- */
+let musicOn = false;
+musicToggle.onclick = () => {
+  if(!musicOn){
+    // If user wants to use music, they can paste a URL into the <source> tag or modify here.
+    // For privacy, default source is empty. If you want a sample, replace src in HTML <audio>.
+    bgMusic.play().catch(()=>{ alert('Trình duyệt chặn phát tự động — hãy nhấn Play lần nữa hoặc cho phép âm thanh.'); });
+    musicToggle.textContent = '⏸️ Tắt nhạc';
+  } else {
+    bgMusic.pause();
+    musicToggle.textContent = '▶️ Bật nhạc';
+  }
+  musicOn = !musicOn;
+};
+
+/* Print button */
+printBtn.onclick = () => window.print();
+
+/* small nicety: press Enter in name or message to apply */
+[nameInput, messageInput].forEach(el=>{
+  el.addEventListener('keydown', e=>{
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault(); applyBtn.click();
+    }
+  });
+});
+
+/* ensure initial text values match */
+displayName.textContent = nameInput.value;
+displayMessage.textContent = messageInput.value;
+
+/* optional: animate cake candle flicker more */
+setInterval(()=>{
+  const flame = document.querySelector('.flame');
+  if(flame) flame.style.opacity = (0.8 + Math.random()*0.4);
+}, 220);
+
+/* Accessibility: allow space to trigger confetti button */
+partyBtn.addEventListener('keyup', (e)=>{ if(e.key === ' '){ partyBtn.click(); } });
+
+</script>
+</body>
+</html>
